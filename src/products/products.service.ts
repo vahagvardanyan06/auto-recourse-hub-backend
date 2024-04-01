@@ -36,7 +36,6 @@ export class ProductsService {
       categoryNameInfo : category.category_name,
       category_name : category.name
     });
-    console.log(product);
     
     
     const uploadPromises = images.map(async (image) => {
@@ -71,6 +70,9 @@ export class ProductsService {
   await this.productModel.deleteOne({ _id : productId }) 
   if (product.images) {
     const deleteImagesPromises = product.images.map(async (each : string, index : number) => {
+      console.log(product.fileNames[index]);
+      console.log(each);
+
       await this.s3Service.deleteFIle(process.env.BUCKET_NAME, product.fileNames[index])
     })
     Promise.all(deleteImagesPromises);    

@@ -4,6 +4,7 @@ import { UserService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserRoles } from 'src/enums/Roles.enum';
 import { User } from 'src/entities/user.entity';
+import { LoginDto } from 'src/dto/user/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
     async validateUser (email : string, password : string) : Promise<User> {
-        const user = await this.userService.findByEmail(email);       
+        const user = await this.userService.findByEmail(email);    
         if (!user) {
             return null;
         }
@@ -22,7 +23,8 @@ export class AuthService {
         return user;
     }
 
-     async login (email : string, password : string) : Promise<{ token: string; }>  {
+     async login (loginDto : LoginDto) : Promise<{ token: string; }>  {
+        const { email } = loginDto;
         const existingUser = await this.userService.findByEmail(email);
         const token =  this.jwtService.sign({ id : existingUser._id }, { secret : process.env.SECRET_KEY });
         return { token : token };

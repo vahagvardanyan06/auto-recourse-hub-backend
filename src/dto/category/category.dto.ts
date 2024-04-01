@@ -4,6 +4,7 @@ import { Category } from 'src/entities/category.entity';
 import { Product } from 'src/entities/product.entity';
 import { CategoryNameInfo } from './categoryName.dto';
 import { Type } from 'class-transformer';
+import { ProductDto } from '../product/product.dto';
 
 
 
@@ -28,7 +29,7 @@ export class CategoryDto {
 
   @ApiProperty({ name: "products", type: Product, isArray: true, required: false })
   @IsOptional()
-  products: Product[];
+  products?: ProductDto[];
 
   static convertToDto (categoryEntity : Category, includeProducts : boolean) : CategoryDto {
     const categoryDto = new CategoryDto();
@@ -36,7 +37,9 @@ export class CategoryDto {
     categoryDto.category_name = categoryEntity.category_name;
     categoryDto.logo_url = categoryEntity.logo_url;
     if (includeProducts) {
-      categoryDto.products = categoryEntity.products;
+      categoryDto.products = categoryEntity.products.map((each : Product) => {
+        return ProductDto.convertToDto(each);
+      });
     } 
     categoryDto.id = categoryEntity._id;
     return categoryDto;

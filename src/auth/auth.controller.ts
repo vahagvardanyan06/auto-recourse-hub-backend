@@ -24,18 +24,16 @@ export class AuthController {
     @ApiOperation({ summary: 'Sign in' })
     @ApiBody({ type: LoginDto })
     @ApiResponse({ status: HttpStatus.OK, description: 'Returns a JWT token' })
-    @ApiResponse({ status: HttpStatus.NOT_FOUND, description: ErrorMessages.invalidCredentials })
+    @ApiResponse({ status: HttpStatus.FORBIDDEN, description: ErrorMessages.invalidCredentials })
     @HttpCode(HttpStatus.OK)
     @Roles([UserRoles.Admin])
     @UseGuards(LocalGuard, RoleGuard)
     @UsePipes(new ValidationPipe({ forbidUnknownValues  : false}))
     @Post(Route.signIn)
     async signin (
-        @Body ('email') email : string,
-        @Body('password') password : string,
-        @Res ({ passthrough : true }) response : Response
+        @Body() loginDto : LoginDto,
     ) : Promise<{ token :  string }> {
-         return await this.authService.login(email, password); 
+         return await this.authService.login(loginDto); 
     }
 }
 

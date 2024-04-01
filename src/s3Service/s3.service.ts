@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import * as AWS from "aws-sdk";
 import { ManagedUpload } from "aws-sdk/clients/s3";
 
@@ -8,13 +8,12 @@ export class S3Service {
 
   constructor() {
     this.s3 = new AWS.S3({
-      accessKeyId: "AKIA5FTZEXMMDGBQ2O5I",
-      secretAccessKey: "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",
+      accessKeyId: "AKIA5FTZEXMMNHRR46JY",
+      secretAccessKey: "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",
       // region : 'Europe (Frankfurt) eu-central-1',
       // s3BucketEndpoint: false,
       // endpoint: "https://s3.amazonaws.com"
     });
-    console.log(this.s3);
   }
 
   async getObject(
@@ -41,24 +40,30 @@ export class S3Service {
         LocationConstraint: "ap-south-1",
       },
     };
-    console.log(String(name));
 
     try {
       let s3Response = await this.s3.upload(params).promise();
       return s3Response;
     } catch (e) {
-      console.log(e, "error");
+      console.log(e);
+      
+      throw new HttpException("Error to upload in AWS", HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
   async deleteFIle(bucket: string, deletedKey: String) {
     const params = {
       Bucket: bucket,
-      Key: String(deletedKey),
+      Key: `3.jpg`
     };
-    console.log(String(deletedKey), "deletedKey");
-
-    return this.s3.deleteObject(params).promise();
+   this.s3.deleteObject(params, (err : any, data : any) => {
+      if (err) {
+        console.log(data);
+        console.log(err);
+        return;
+      }
+      console.log(data);
+    }).promise();
   }
 
   async updateFile(
