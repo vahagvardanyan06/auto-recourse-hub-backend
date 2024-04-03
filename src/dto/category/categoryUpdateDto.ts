@@ -1,12 +1,13 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsNotEmpty, IsUrl } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from '@nestjs/swagger';
+import { IsOptional, IsNotEmpty, IsUrl, IsArray } from 'class-validator';
+import { ImageDto } from '../image/image.dto';
+import { CategoryNameInfo } from './categoryName.dto';
 
 export class CategoryUpdateDto {
-  @ApiPropertyOptional({ name: "category_name", type: String, required: false })
+  @ApiPropertyOptional({ name: "category_name", type: CategoryNameInfo, required: false })
   @IsOptional()
-  category_name?: string;
+  category_name?: CategoryNameInfo;
 
-  @ApiPropertyOptional({ name: "logo_url", type: String, required: false })
-  @IsOptional()
-  logo_url?: string;
+  @ApiResponseProperty({type : ImageDto })
+  logo_url? : ImageDto;
 }

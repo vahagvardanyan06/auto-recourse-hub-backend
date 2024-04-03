@@ -10,25 +10,27 @@ import { MulterModule } from '@nestjs/platform-express';
 import { Category, CategoryModel } from 'src/entities/category.entity';
 import { CategoryService } from 'src/category/category.service';
 import { S3Service } from 'src/s3Service/s3.service';
+import { ImageModel, MImage } from 'src/entities/image.entity';
+import { ImageService } from 'src/imageService/image.service';
 
 
 
 
 @Module({
   imports : [
-    MongooseModule.forFeature([{ name : Product.name, schema : ProductModel}, { name : User.name, schema : UserModel}, { name : Category.name, schema : CategoryModel}]),
+    MongooseModule.forFeature([{ name : Product.name, schema : ProductModel}, { name : User.name, schema : UserModel}, { name : Category.name, schema : CategoryModel}, { name : MImage.name, schema : ImageModel }]),
   ],
   providers : [
     ProductsService,
     JwtService,
     UserService,
     CategoryService,
-    S3Service
+    S3Service,
+    ImageService
   ],
   controllers : [
     ProductsController
-  ]
-
+  ],
 })
 
 export class ProductModule {}

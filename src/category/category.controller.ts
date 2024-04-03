@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, UseFilters, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpStatus, Param, ParseFilePipe, Patch, Post, UploadedFile, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryDto } from 'src/dto/category/category.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -7,6 +7,8 @@ import { JwtGuard } from 'src/guards/jwt.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { ObjectIdValidationPipe } from 'src/pipes/object-id-validation.pipe';
 import { CategoryUpdateDto } from 'src/dto/category/categoryUpdateDto';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { log } from 'console';
 
 @UseFilters(AllExceptionsFilter)
 @ApiTags('Category')
@@ -19,19 +21,25 @@ export class CategoryController {
   @ApiBearerAuth() 
   @ApiOperation({ summary : "Create Category"})
   @ApiBody({ type : CategoryDto })
-  @ApiResponse({ status : HttpStatus.CREATED, description : 'Create a Product'})
+  @ApiResponse({ status : HttpStatus.CREATED, description : 'Create a Category', type : CategoryDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validation failed' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized'})
   @HttpCode(HttpStatus.CREATED)
   // @Roles([UserRoles.Admin])
   // @UseGuards(JwtGuard, RoleGuard)
+  @UseInterceptors(FileInterceptor('logo'))
   @Post()
   createCategory (
-    @Body() categoryDto : CategoryDto
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+        ],
+      }),
+    ) logo:  Express.Multer.File,
+    @Body() categoryDto : CategoryDto,
   ) {
-    console.log(categoryDto.name);
-    
-    return this.categoryService.createCategory(categoryDto); 
+    return this.categoryService.createCategory(categoryDto, logo); 
   }
 
   @ApiOperation({ summary : "Get category with name"})
@@ -50,7 +58,7 @@ export class CategoryController {
   @HttpCode(HttpStatus.OK)
   @Get()
   getAllCategories () {
-    return this.categoryService.getAllCategories()
+    return this.categoryService.getAllCategories();
   }
 
   @ApiOperation({ summary : 'Get By Id'})
@@ -72,13 +80,26 @@ export class CategoryController {
   @ApiResponse({ type : CategoryUpdateDto })
   // @Roles([UserRoles.Admin])
   // @UseGuards(JwtGuard, RoleGuard)
+  @UseInterceptors(FileInterceptor('logo'))
   @Patch(':id') 
   updateCategory (
     @Param('id', ObjectIdValidationPipe) categoryId : string,
-    @Body() updateDto : CategoryUpdateDto
+    @Body() updateDto : CategoryUpdateDto,
+    @UploadedFile() logo?:  Express.Multer.File,
   ) {
-      return this.categoryService.updateCategory(categoryId, updateDto)
+      return this.categoryService.updateCategory(categoryId, updateDto,logo)
   }
+
+  // @ApiBearerAuth() 
+  @ApiResponse({ description : 'Delete category with specifed id'})
+  @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'})
+  @Delete(':id')
+  deleteCategory (
+    @Param('id', ObjectIdValidationPipe) categoryId : string
+  ) {
+    return this.categoryService.deleteCategory(categoryId);
+  }
+
 
 
 }

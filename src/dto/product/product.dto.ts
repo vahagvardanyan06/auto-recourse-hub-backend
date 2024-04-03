@@ -10,13 +10,13 @@ import { ProductNameInfo } from './prodcutNameInfo.dto';
 import { Category } from 'src/entities/category.entity';
 import { Types } from 'mongoose';
 import { CategoryNameInfo } from '../category/categoryName.dto';
+import { MImage } from 'src/entities/image.entity';
+import { ImageDto } from '../image/image.dto';
 
 
 export class ProductDto {
   @ApiResponseProperty()
   id : string
-
-
 
   @ApiProperty({ name :  'product_name' , type : ProductNameInfo})
   @IsNotEmpty()
@@ -42,13 +42,9 @@ export class ProductDto {
   @Type(() => ProductContactInfo)
   contactInfo: ProductContactInfo;
 
-
-  @ApiPropertyOptional( {name : 'images', type : File})
+  @ApiPropertyOptional({ name: 'images', type: ImageDto })
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  images?: string[];
-
+  images?: ImageDto[];
 
   @IsNotEmpty()
   @IsString()
@@ -72,7 +68,7 @@ export class ProductDto {
     productDto.id = productEntity._id;
     productDto.description = productEntity.description;
     productDto.price = productEntity.price;
-    productDto.images = productEntity.images;
+    productDto.images = productEntity.images.map(image => ImageDto.convertToDto(image));
     productDto.contactInfo = productEntity.contactInfo;
     productDto.topSale = productEntity.topSale ? "true" : "false";
     productDto.display_name = productEntity.categoryNameInfo;

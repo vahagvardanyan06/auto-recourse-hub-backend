@@ -10,7 +10,7 @@ export class S3Service {
     this.s3 = new AWS.S3({
       accessKeyId: "AKIA5FTZEXMMNHRR46JY",
       secretAccessKey: "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",
-      // region : 'Europe (Frankfurt) eu-central-1',
+      region : 'eu-central-1',
       // s3BucketEndpoint: false,
       // endpoint: "https://s3.amazonaws.com"
     });
@@ -54,15 +54,12 @@ export class S3Service {
   async deleteFIle(bucket: string, deletedKey: String) {
     const params = {
       Bucket: bucket,
-      Key: `3.jpg`
+      Key: String(deletedKey)
     };
-   this.s3.deleteObject(params, (err : any, data : any) => {
+   return this.s3.deleteObject(params, (err : any, data : any) => {
       if (err) {
-        console.log(data);
-        console.log(err);
         return;
       }
-      console.log(data);
     }).promise();
   }
 

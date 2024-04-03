@@ -28,14 +28,9 @@ export class JwtGuard  {
                     secret : this.configService.get<string>('SECRET_KEY'),
                 }
             );
-            console.log(paylaod, "<----paylaod");
-            
             request['user'] = paylaod;
-            
             return true
         } catch (err) {
-            console.log('inside catch block');
-            
             throw new UnauthorizedException();
         }
         

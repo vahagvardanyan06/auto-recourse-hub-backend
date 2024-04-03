@@ -4,17 +4,13 @@ import { Product } from './product.entity';
 import { Document } from 'mongoose';
 import { CategoryNameInfo } from 'src/dto/category/categoryName.dto';
 import { Type } from 'class-transformer';
+import { MImage } from './image.entity';
 
 @Schema()
 export class Category extends Document {
-
-  @IsNotEmpty()
-  @IsString()
-  @IsUrl()
-  @Prop({ type : String, required : true })
-  logo_url : string
-
-
+  @Prop({ type: 'ObjectId', ref: 'MImage'  , required : true })
+  logo_url : MImage;
+  
   @ValidateNested()
   @Type(() => CategoryNameInfo)
   @IsNotEmpty()

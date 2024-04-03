@@ -1,12 +1,12 @@
-import { IsBoolean, IsNotEmpty, IsOptional, ValidateNested} from "class-validator";
+import { IsNotEmpty, IsOptional, ValidateNested} from "class-validator";
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ProductDescriptionDto } from 'src/dto/product/productDescription.dto';
 import { Type } from 'class-transformer';
 import { ProductContactInfo } from 'src/dto/product/productContactInfo.dto';
 import { ProductNameInfo } from 'src/dto/product/prodcutNameInfo.dto';
-import { Category } from './category.entity';
 import { CategoryNameInfo } from 'src/dto/category/categoryName.dto';
+import { MImage } from './image.entity';
 @Schema()
 export class Product extends Document {
   @ValidateNested()
@@ -24,8 +24,8 @@ export class Product extends Document {
   @Prop({ type : String, required : true })
   price : string
 
-  @Prop([String])
-  images : string[]
+  @Prop({ type: [{ type: 'ObjectId', ref: 'MImage' }] })
+  images? : MImage []
 
   @ValidateNested()
   @Type(() => ProductContactInfo)

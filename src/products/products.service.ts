@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from 'src/entities/product.entity';
 import { Model } from 'mongoose';
@@ -11,12 +11,14 @@ import { CategoryService } from 'src/category/category.service';
 import { S3Service } from 'src/s3Service/s3.service';
 import * as path from 'path'
 import * as querystring from 'querystring';
+import { ImageService } from 'src/imageService/image.service';
+import { MImage } from 'src/entities/image.entity';
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Product.name) private readonly productModel : Model<Product>,
-    private categoryService : CategoryService,
-    private s3Service : S3Service,
+    @Inject(forwardRef(() => CategoryService)) private categoryService: CategoryService,
+    private imageService : ImageService
   ) {}
 
   private parseBoolean(value: string): boolean {
@@ -25,27 +27,27 @@ export class ProductsService {
 
   async create(images: Express.Multer.File[], productDto : ProductDto): Promise<ProductDto> {
     const { categoryId,  topSale, ...productData } = productDto;
-    const category = await this.categoryService.findById(categoryId);
+    const category = await this.categoryService.findCategoryById(categoryId);
     if (!category) {
       throw new NotFoundException('Category not found');
     }
-    const product = await this.productModel.create({
+     const product = await this.productModel.create({
       ...productData,
       topSale : this.parseBoolean(topSale) ? true : false,
-      images: [], 
       categoryNameInfo : category.category_name,
       category_name : category.name
     });
     
-    
-    const uploadPromises = images.map(async (image) => {
-      const encodedFileName = querystring.escape(path.basename(image.originalname));
-      product.fileNames.push(encodedFileName);
-      const s3Data = await this.s3Service.s3_upload(image.buffer, process.env.BUCKET_NAME, encodedFileName, image.mimetype);
-      product.images.push(s3Data.Location);
+    const saveImagePromises = images.map(async (image: Express.Multer.File) => {
+      const savedImage = await this.imageService.saveImages(image);
+      return savedImage;
     });
-  
-    await Promise.all(uploadPromises);
+    
+    const savedImages = await Promise.all(saveImagePromises);
+    
+    savedImages.forEach(savedImage => {
+      product.images.push(savedImage);
+    });
     category.products.push(product);
     await category.save()
     await product.save();
@@ -55,6 +57,7 @@ export class ProductsService {
 
   async getById (productId : string) : Promise<ProductDto | any> {
     const product = await this.productModel.findById(productId)
+    .populate('images')
     if (!product) {
       throw new NotFoundException(ErrorMessages.notFound)
     } 
@@ -68,12 +71,10 @@ export class ProductsService {
     throw new NotFoundException(ErrorMessages.notFound);
   }
   await this.productModel.deleteOne({ _id : productId }) 
+  
   if (product.images) {
-    const deleteImagesPromises = product.images.map(async (each : string, index : number) => {
-      console.log(product.fileNames[index]);
-      console.log(each);
-
-      await this.s3Service.deleteFIle(process.env.BUCKET_NAME, product.fileNames[index])
+   const deleteImagesPromises =  product.images.map(async (each : MImage) => {
+      await this.imageService.deleteImage(each._id);
     })
     Promise.all(deleteImagesPromises);    
   }
@@ -88,7 +89,12 @@ export class ProductsService {
       const count = await this.productModel.countDocuments({}).exec();
       const page_total = Math.floor((count - 1)/ limit) + 1;
       const skip = (page - 1) * limit;
-      const data =  await this.productModel.find().limit(limit).skip(skip).exec()
+      const data =  await this.productModel
+      .find()
+      .populate('images')
+      .limit(limit)
+      .skip(skip)
+      .exec()
       const productDtos = data.map((each : Product) => {
         return ProductDto.convertToDto(each)
       })
@@ -102,23 +108,49 @@ export class ProductsService {
 
 
   async updateProduct (productId : string, updatedDto : UpdateProductDto, images : Array<Express.Multer.File>) {
-    const product = await this.productModel.findById(productId);
+    const product = await this.productModel.findById(productId)
+    .populate('images');
     if (!product) {
       throw new NotFoundException(ErrorMessages.notFound)
     }
-
+   
     if (images) {
-      const existingIamges = product.images;
-      if (existingIamges) {
-        const uploadPromises =  Array.from(existingIamges).map((each : string) => {
-        })
+      const imagesToDelete = updatedDto.imageIds;
+      if (imagesToDelete && imagesToDelete.length) {
+         const deletedPromsies =  product.images.map(async (each : any) => {
+            if (imagesToDelete.includes(each._id.toString())) {
+              await this.imageService.deleteImage(each._id);
+          }
+          })
+          Promise.all(deletedPromsies);
       }
+      const addedIamges = images.map(async (each : Express.Multer.File) => {
+       return product.images.push(await this.imageService.saveImages(each));
+      })
+      await Promise.all(addedIamges);
     }
-  }
+    Object.entries(updatedDto).forEach(([key, value]) => {
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          Object.entries(value).forEach(([nestedObjectkey, nestedObjectvalue]) => {
+            product[key][nestedObjectkey] = nestedObjectvalue;
+          })
+        } else {
+          product[key] = value
+        }
+    })
+    const updatedOne = await product.save()
+    await this.productModel.findOneAndUpdate(
+      { _id: productId },
+      { $set: updatedOne },
+  );
+  return {
+    status : HttpStatus.OK
+  };
+}
 
 
   async topSaleProducts () : Promise<ProductDto[] | ProductDto | []> {
-    const topSaleProducts = await this.productModel.find({ topSale: true });
+    const topSaleProducts = await this.productModel.find({ topSale: true }).populate('images');
     if (!topSaleProducts) {
       return [];
     }

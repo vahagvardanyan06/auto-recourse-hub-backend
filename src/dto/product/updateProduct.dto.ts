@@ -1,17 +1,19 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ProductDescriptionDto } from './productDescription.dto';
 import { ProductContactInfo } from './productContactInfo.dto';
 import { UpdateProductDescriptionDto } from './updateProductDescriptio.dto';
 import { UpdateProductContactInfo } from './updateProductContactInfo.dto';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ProductNameInfo } from './prodcutNameInfo.dto';
+import { UpdateProductNameDto } from './updateProductName.dto';
 
 export class UpdateProductDto {
-  
-  @ApiPropertyOptional({ name : 'product_name', type : String})
+  @ApiPropertyOptional({ name : 'product_name', type : UpdateProductNameDto})
   @IsOptional()
-  @IsString()
-  product_name?: string;
+  @ValidateNested()
+  @Type(() => UpdateProductDescriptionDto)
+  product_name?: UpdateProductNameDto;
 
   @ApiPropertyOptional({ name : 'description', type : UpdateProductDescriptionDto})
   @IsOptional()
@@ -20,7 +22,6 @@ export class UpdateProductDto {
   description?: UpdateProductDescriptionDto;
 
   @ApiPropertyOptional({ name : 'price', type : String})
-
   @IsOptional()
   @IsString()
   price? : string;
@@ -37,4 +38,10 @@ export class UpdateProductDto {
   @IsOptional()
   @IsString()
   topSale? : string;
+
+
+  @ApiProperty({ type: [String], required: false })
+  @IsOptional()
+  @IsArray()
+  imageIds?: string[]; 
 }

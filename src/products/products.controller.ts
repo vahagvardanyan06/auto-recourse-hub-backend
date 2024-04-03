@@ -84,7 +84,7 @@ export class ProductsController {
   async deleteProduct (
     @Param('id') productId : string,
   ) {
-    return await this.productService.deleteProduct(productId)
+    return await this.productService.deleteProduct(productId);
   }
 
   @ApiBearerAuth() 
@@ -99,16 +99,8 @@ export class ProductsController {
   async updateProduct (
     @Param('id', ObjectIdValidationPipe) productId : string,
     @Body() updateDto : UpdateProductDto, 
-    @Req() req : Request,
-    @UploadedFiles(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-        ],
-      }),
-    ) images?:  Array<Express.Multer.File>,
+    @UploadedFiles() images?:  Array<Express.Multer.File>,
   ) {
-    
-    return await this.productService.updateProduct(productId, updateDto, images)
+    return await this.productService.updateProduct(productId, updateDto, images);
   }
 }
