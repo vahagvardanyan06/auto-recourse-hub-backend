@@ -8,8 +8,8 @@ export class S3Service {
 
   constructor() {
     this.s3 = new AWS.S3({
-      accessKeyId: "AKIA5FTZEXMMNHRR46JY",
-      secretAccessKey: "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",
+      accessKeyId: process.env.BUCKET_ID,
+      secretAccessKey: process.env.BUCKET_SECRET ,
       region : 'eu-central-1',
       // s3BucketEndpoint: false,
       // endpoint: "https://s3.amazonaws.com"

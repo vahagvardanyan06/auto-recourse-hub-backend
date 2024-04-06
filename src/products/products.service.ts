@@ -1,16 +1,11 @@
-import { HttpStatus, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from 'src/entities/product.entity';
 import { Model } from 'mongoose';
 import { ProductDto } from 'src/dto/product/product.dto';
-import { UserService } from 'src/users/users.service';
 import { ErrorMessages } from 'src/constants/constants';
 import { UpdateProductDto } from 'src/dto/product/updateProduct.dto';
-import { Category } from 'src/entities/category.entity';
 import { CategoryService } from 'src/category/category.service';
-import { S3Service } from 'src/s3Service/s3.service';
-import * as path from 'path'
-import * as querystring from 'querystring';
 import { ImageService } from 'src/imageService/image.service';
 import { MImage } from 'src/entities/image.entity';
 @Injectable()
@@ -68,7 +63,7 @@ export class ProductsService {
   async deleteProduct (productId : string) {
   const product = await this.productModel.findById(productId);
   if (!product) {
-    throw new NotFoundException(ErrorMessages.notFound);
+    throw new HttpException(ErrorMessages.notFound, HttpStatus.NOT_FOUND);
   }
   await this.productModel.deleteOne({ _id : productId }) 
   

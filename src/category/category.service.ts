@@ -7,7 +7,6 @@ import { Category } from 'src/entities/category.entity';
 import { CategoryNameInfo } from 'src/dto/category/categoryName.dto';
 import { MImage } from 'src/entities/image.entity';
 import { ImageService } from 'src/imageService/image.service';
-import { log } from 'console';
 import { Product } from 'src/entities/product.entity';
 import { ProductsService } from 'src/products/products.service';
 
