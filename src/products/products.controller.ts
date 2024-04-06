@@ -22,8 +22,8 @@ export class ProductsController {
   @ApiBody({ type : ProductDto })
   @ApiResponse({ status : HttpStatus.CREATED, description : 'Create a Product', type : ProductDto })
   @HttpCode(HttpStatus.CREATED)
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FilesInterceptor('images', 12))
   @Post()
   async createProduct (
@@ -73,13 +73,13 @@ export class ProductsController {
     return await this.productService.getById(productId);
   }
 
-  // @ApiBearerAuth() 
+  @ApiBearerAuth() 
   @ApiOperation({ summary : 'Delete Product'})
   @ApiResponse({ status : HttpStatus.OK, description : 'Delete product with provied id' })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
   @HttpCode(HttpStatus.OK)
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @Delete(':id')
   async deleteProduct (
     @Param('id') productId : string,
@@ -92,8 +92,8 @@ export class ProductsController {
   @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provied id', type : ProductDto })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
   @HttpCode(HttpStatus.OK)
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FilesInterceptor('images'))
   @Patch(':id')
   async updateProduct (

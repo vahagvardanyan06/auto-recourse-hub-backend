@@ -9,6 +9,8 @@ import { ObjectIdValidationPipe } from 'src/pipes/object-id-validation.pipe';
 import { CategoryUpdateDto } from 'src/dto/category/categoryUpdateDto';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { log } from 'console';
+import { Roles } from 'src/decorators/role.decorator';
+import { UserRoles } from 'src/enums/Roles.enum';
 
 @UseFilters(AllExceptionsFilter)
 @ApiTags('Category')
@@ -25,8 +27,8 @@ export class CategoryController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Validation failed' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized'})
   @HttpCode(HttpStatus.CREATED)
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FileInterceptor('logo'))
   @Post()
   createCategory (
@@ -72,14 +74,14 @@ export class CategoryController {
     return this.categoryService.getCategoryById(categoryId);
   }
 
-  // @ApiBearerAuth() 
+  @ApiBearerAuth() 
   @ApiOperation({ summary : "Update Category" })
   @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provied id' })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ type : CategoryUpdateDto })
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FileInterceptor('logo'))
   @Patch(':id') 
   updateCategory (
@@ -90,9 +92,11 @@ export class CategoryController {
       return this.categoryService.updateCategory(categoryId, updateDto,logo)
   }
 
-  // @ApiBearerAuth() 
+  @ApiBearerAuth() 
   @ApiResponse({ description : 'Delete category with specifed id'})
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'})
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @Delete(':id')
   deleteCategory (
     @Param('id', ObjectIdValidationPipe) categoryId : string

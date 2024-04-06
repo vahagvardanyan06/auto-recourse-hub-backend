@@ -50,7 +50,7 @@ export class CategoryService {
       const isCategoryExist = await this.findByDisplayName(category_name);
 
       if (isCategoryExist) {
-        throw new BadRequestException("Category already exist")
+        throw new HttpException("Category already exist", HttpStatus.BAD_REQUEST)
       }
       const { us } = category_name;
       const modifiedUsName = us.replace(/\s+/g, '_').toLowerCase();
@@ -96,7 +96,7 @@ export class CategoryService {
       }
     });
       if (!category) {
-        return new NotFoundException("Category not found")
+        throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
       }
       return CategoryDto.convertToDto(category, true);
   }
@@ -129,7 +129,7 @@ export class CategoryService {
   async getCategoryWithName (name : string) : Promise<CategoryDto | NotFoundException> {
     const category = await this.findByName(name);
     if (!category) {
-      throw new NotFoundException(`Category with name ${name} not found`)
+      throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
     }
     return CategoryDto.convertToDto(category,true);
   }
@@ -144,13 +144,7 @@ export class CategoryService {
   async deleteCategory(categoryId : string) : Promise<CategoryDto | any> {
     const category = await this.category_model.findById(categoryId);
     if (!category) {
-      throw new NotFoundException('Category not found')
-    }
-    if (category.products) {
-      const deletedProducts = category.products.map(async (each : Product) => {
-        await this.productService.deleteProduct(each._id);
-      })
-      Promise.all(deletedProducts);
+      throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
     }
     await this.imageService.deleteImage( category.logo_url._id);
     await this.category_model.deleteOne({ _id : categoryId });
@@ -165,7 +159,7 @@ export class CategoryService {
       );
 
       if (updatedCategory.modifiedCount === 0) {
-        throw new Error('Product not found in Category\'s products array');
+        throw new HttpException('Product not found in Category\'s products array', HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
       const category = await this.category_model.findById(categoryId);

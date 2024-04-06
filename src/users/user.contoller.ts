@@ -22,8 +22,8 @@ export class UserController {
   ) {}
 
   @ApiBearerAuth()
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @ApiBody({type : UserDto})
   @ApiResponse({ 
     status: HttpStatus.OK, 
@@ -44,8 +44,8 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: ErrorMessages.invalidCredentials })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: ErrorMessages.invalidCredentials })
   @HttpCode(HttpStatus.OK)
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @Get()
   async getUsers (
   )  {
@@ -57,8 +57,8 @@ export class UserController {
   @ApiBody({ type : UserUpdateDto })
   @ApiResponse({ status : HttpStatus.OK, description : 'Return updateed User', type : UserDto})
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "User not found" })
-  // @Roles([UserRoles.Admin])
-  // @UseGuards(JwtGuard, RoleGuard)
+  @Roles([UserRoles.Admin])
+  @UseGuards(JwtGuard, RoleGuard)
   @HttpCode(HttpStatus.OK)
   @Patch(':userId')
   async updateUserData (
