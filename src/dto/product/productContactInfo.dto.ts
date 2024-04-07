@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 
@@ -7,13 +7,11 @@ export class ProductContactInfo {
   @IsNotEmpty()
   @IsString()
   phoneNumber : string
-
-
-
-  @ApiProperty({ name : "email", type : String})
+  
+  @ApiPropertyOptional({ name: 'email', type: String })
   @IsOptional()
   @IsString()
-  email : string
+  email?: string
 
   @ApiProperty({ name : "fullname", type : String})
   @IsNotEmpty()

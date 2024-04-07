@@ -13,7 +13,7 @@ export const ErrorMessages = {
     alreadyExists : 'UserAlreadyExists',
     internalServerError : 'Internal Server Error',
     invalidCredentials : 'Invalid email or password',
-    notFound : 'Product not found'
+    notFound : 'Not found'
 } 
 
 

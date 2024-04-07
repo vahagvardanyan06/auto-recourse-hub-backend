@@ -30,7 +30,8 @@ export class ProductsService {
       ...productData,
       topSale : this.parseBoolean(topSale) ? true : false,
       categoryNameInfo : category.category_name,
-      category_name : category.name
+      category_name : category.name,
+      
     });
     
     const saveImagePromises = images.map(async (image: Express.Multer.File) => {

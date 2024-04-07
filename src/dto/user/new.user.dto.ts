@@ -5,7 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { UserRoles } from 'src/enums/Roles.enum';
 
 
-export class UserDto {
+export class NewUserDto {
     @ApiProperty({ name: 'name', type: String, description: 'User name' })
     @IsNotEmpty({ message: 'Name is required' })
     name : string;
@@ -24,13 +24,12 @@ export class UserDto {
     @ApiProperty({ name: 'phoneNumber', type: String, description: 'User phone number' })
     phoneNumber : string;
 
+    
     roles : UserRoles[];
-
-
     id : string;
 
     static convertToDto(userEntity : User) {
-        const userDto = new UserDto();
+        const userDto = new NewUserDto();
         userDto.id = userEntity._id;
         userDto.email = userEntity.email;
         userDto.name = userEntity.name;

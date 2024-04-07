@@ -1,17 +1,17 @@
-import { UserDto } from "src/dto/user/newUser.dto";
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../entities/user.entity'
 import { UserRoles } from 'src/enums/Roles.enum';
 import { ErrorMessages } from 'src/constants/constants';
 import { S3Service } from 'src/s3Service/s3.service';
-import { UserUpdateDto } from 'src/dto/user/existingUser.dto';
+import { UserUpdateDto } from 'src/dto/user/update.user.dto';
+import { NewUserDto } from 'src/dto/user/new.user.dto';
+import { UserDto } from 'src/dto/user/existing.user.dto';
 @Injectable()
 export class UserService {
         constructor (
             @InjectModel(User.name) private readonly userModel: Model<User>,
-            private s3Service : S3Service
         ) {}
     
         async findById (id : string) : Promise<User> {
@@ -40,11 +40,11 @@ export class UserService {
             }
           }
 
-          async createUser (userDto : UserDto) {
+          async createUser (userDto : NewUserDto) {
             const { email, password, name, phoneNumber } = userDto;
             const isExist = await this.findByEmail(email);
             if (isExist) {
-              throw new ConflictException();
+              throw new HttpException('User already exist', HttpStatus.BAD_REQUEST);
             } 
             const newUser = await this.userModel.create ({
               name,
@@ -59,20 +59,21 @@ export class UserService {
           async updateUser (userId : string, userDto : UserUpdateDto) {
             const user = await this.findById(userId);
             if (!user) {
-              throw new NotFoundException(`User with id ${userId} not found`)
+              throw new HttpException(`User with id ${userId} not found`, HttpStatus.NOT_FOUND)
             };
-        
             let updateData: Partial<User> = { ...userDto};
             const updatedUser = await this.userModel.findByIdAndUpdate(user, { ...updateData }, { new: true }).select('-password -roles');
-            return updatedUser;
+            return UserDto.convertToDto(updatedUser);
           }
 
-          async getAll() {
-            const users = await this.userModel.find().select('-password -roles')
+          async getAll() : Promise<UserDto | UserDto[] | []> {
+            const users = await this.userModel.find();
             if (!users.length) {
-              throw new NotFoundException(ErrorMessages.notFound)
+              throw new HttpException(ErrorMessages.notFound, HttpStatus.NOT_FOUND)
             }
-            return users;
+            return users.map((each : User) => {
+              return UserDto.convertToDto(each);
+            })
           }
 }
 

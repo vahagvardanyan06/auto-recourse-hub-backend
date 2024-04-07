@@ -42,7 +42,7 @@ export class ProductDto {
   @Type(() => ProductContactInfo)
   contactInfo: ProductContactInfo;
 
-  @ApiPropertyOptional({ name: 'images', type: ImageDto })
+  @ApiPropertyOptional({ name: 'images', type: [ImageDto] })
   @IsOptional()
   images?: ImageDto[];
 
@@ -56,7 +56,7 @@ export class ProductDto {
   topSale : string;
  
   @ApiResponseProperty({ type : CategoryNameInfo })
-  display_name : CategoryNameInfo;
+  category_display_name : CategoryNameInfo;
   
   @ApiResponseProperty({ type : String })
   category_name : string;
@@ -71,7 +71,7 @@ export class ProductDto {
     productDto.images = productEntity.images.map(image => ImageDto.convertToDto(image));
     productDto.contactInfo = productEntity.contactInfo;
     productDto.topSale = productEntity.topSale ? "true" : "false";
-    productDto.display_name = productEntity.categoryNameInfo;
+    productDto.category_display_name = productEntity.categoryNameInfo;
     productDto.category_name = productEntity.category_name;
     return productDto;
   }

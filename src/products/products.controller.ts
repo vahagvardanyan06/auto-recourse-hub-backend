@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpStatus, NotFoundException, Param, ParseFilePipe, Patch, Post, Put, Query, Req, Res, UploadedFile, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, ParseFilePipe, Patch, Post, Put, Query, Req, Res, UploadedFile, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllExceptionsFilter } from 'src/filter/all.exception.filter';
 import { ProductsService } from './products.service';
@@ -18,22 +18,17 @@ export class ProductsController {
   constructor (private readonly productService : ProductsService,
     ) {}
 
+  @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Create Product'})
   @ApiBody({ type : ProductDto })
   @ApiResponse({ status : HttpStatus.CREATED, description : 'Create a Product', type : ProductDto })
-  @HttpCode(HttpStatus.CREATED)
   @Roles([UserRoles.Admin])
   @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FilesInterceptor('images', 12))
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async createProduct (
-    @UploadedFiles(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-        ],
-      }),
-    ) images:  Array<Express.Multer.File>,
+    @UploadedFiles() images:  Array<Express.Multer.File>,
     @Body() productDto: ProductDto
   ) : Promise<ProductDto>{
     return await this.productService.create(images,productDto)
@@ -42,7 +37,7 @@ export class ProductsController {
   
   @ApiOperation({ summary : 'Get all Prouducts'})
   @ApiResponse({ status : HttpStatus.OK, description : 'Return all products if products not found return []'})
-  @ApiResponse({ type : [ProductDto] || ProductDto || null })
+  @ApiResponse({ type : [ProductDto] || ProductDto })
   @HttpCode(HttpStatus.OK)
   @Get()
   async getAllProducts (
@@ -52,8 +47,7 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary : 'Return top saled products'})
-  @ApiResponse({ type : [ProductDto] || ProductDto || null })
-  @ApiResponse({ status : HttpStatus.OK , description : 'Return top saled prodcuts if exists' })
+  @ApiResponse({ status : HttpStatus.OK , description : 'Return top saled prodcuts if exists', type: [ProductDto]  })
   @HttpCode(HttpStatus.OK)
   @Get('top_sale')
   getTopSaleProducts () {
@@ -61,9 +55,8 @@ export class ProductsController {
   }
 
   @ApiOperation({ summary : 'Get By Id'})
-  @ApiResponse({ status : HttpStatus.OK, description : 'Return a Single Product with specified id' })
+  @ApiResponse({ status : HttpStatus.OK, description : 'Return a Single Product with specified id', type : ProductDto })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist' })
-  @ApiResponse({ type : ProductDto })
   @HttpCode(HttpStatus.OK)
   @Get(':id')
   async getSingleProduct (
@@ -73,7 +66,7 @@ export class ProductsController {
     return await this.productService.getById(productId);
   }
 
-  @ApiBearerAuth() 
+  @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Delete Product'})
   @ApiResponse({ status : HttpStatus.OK, description : 'Delete product with provied id' })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
@@ -87,7 +80,7 @@ export class ProductsController {
     return await this.productService.deleteProduct(productId);
   }
 
-  @ApiBearerAuth() 
+  @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Update Product' })
   @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provied id', type : ProductDto })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })

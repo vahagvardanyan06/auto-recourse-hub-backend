@@ -20,7 +20,7 @@ export class CategoryController {
     private categoryService : CategoryService
   ) {}
 
-  @ApiBearerAuth() 
+  @ApiBearerAuth('auto-recourse-hub') 
   @ApiOperation({ summary : "Create Category"})
   @ApiBody({ type : CategoryDto })
   @ApiResponse({ status : HttpStatus.CREATED, description : 'Create a Category', type : CategoryDto })
@@ -32,13 +32,7 @@ export class CategoryController {
   @UseInterceptors(FileInterceptor('logo'))
   @Post()
   createCategory (
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
-        ],
-      }),
-    ) logo:  Express.Multer.File,
+    @UploadedFile() logo:  Express.Multer.File,
     @Body() categoryDto : CategoryDto,
   ) {
     return this.categoryService.createCategory(categoryDto, logo); 
@@ -74,7 +68,7 @@ export class CategoryController {
     return this.categoryService.getCategoryById(categoryId);
   }
 
-  @ApiBearerAuth() 
+  @ApiBearerAuth('auto-recourse-hub') 
   @ApiOperation({ summary : "Update Category" })
   @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provied id' })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
@@ -92,7 +86,7 @@ export class CategoryController {
       return this.categoryService.updateCategory(categoryId, updateDto,logo)
   }
 
-  @ApiBearerAuth() 
+  @ApiBearerAuth('auto-recourse-hub') 
   @ApiResponse({ description : 'Delete category with specifed id'})
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'})
   @Roles([UserRoles.Admin])

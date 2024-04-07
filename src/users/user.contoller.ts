@@ -1,17 +1,15 @@
-import { Body, Controller, FileTypeValidator, Get, HttpCode, HttpStatus, NotFoundException, Param, ParseFilePipe, Patch, Post, Put, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller,Get, HttpCode, HttpStatus, NotFoundException, Param, ParseFilePipe, Patch, Post, Put, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './users.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { UserRoles } from 'src/enums/Roles.enum';
-import { Response } from 'express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorMessages } from 'src/constants/constants';
-import { UserAvatarRequestBody } from 'src/constants/constants';
 import { JwtGuard } from 'src/guards/jwt.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { ObjectIdValidationPipe } from 'src/pipes/object-id-validation.pipe';
-import { UserDto } from 'src/dto/user/newUser.dto';
-import { UserUpdateDto } from 'src/dto/user/existingUser.dto';
+import { NewUserDto } from 'src/dto/user/new.user.dto';
+import { UserUpdateDto } from 'src/dto/user/update.user.dto';
+import { UserDto } from 'src/dto/user/existing.user.dto';
 
 
 @ApiTags("User")
@@ -21,10 +19,10 @@ export class UserController {
     private userService : UserService
   ) {}
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('auto-recourse-hub')
   @Roles([UserRoles.Admin])
   @UseGuards(JwtGuard, RoleGuard)
-  @ApiBody({type : UserDto})
+  @ApiBody({type : NewUserDto})
   @ApiResponse({ 
     status: HttpStatus.OK, 
     description: 'Returns the created User',
@@ -32,27 +30,26 @@ export class UserController {
   })
   @Post()
   async createUser (
-      @Body() userDto : UserDto
+      @Body() userDto : NewUserDto
   ) {
       return await this.userService.createUser(userDto)
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Get all User/Admin '})
-  @ApiResponse({ status  : HttpStatus.OK, description : 'Return all User\s/Admin\s '})
+  @ApiResponse({ status  : HttpStatus.OK, description : 'Return all User\s/Admin\s ', type : [UserDto]})
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: ErrorMessages.notFound })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: ErrorMessages.invalidCredentials })
-  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: ErrorMessages.invalidCredentials })
-  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: "Unauthorized" })
   @Roles([UserRoles.Admin])
   @UseGuards(JwtGuard, RoleGuard)
   @Get()
+  @HttpCode(HttpStatus.OK)
   async getUsers (
   )  {
     return await this.userService.getAll();
   }
 
-  @ApiBearerAuth()
+  @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Update User info '})
   @ApiBody({ type : UserUpdateDto })
   @ApiResponse({ status : HttpStatus.OK, description : 'Return updateed User', type : UserDto})
