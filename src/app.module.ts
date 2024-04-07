@@ -1,10 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { configService } from './DbConfig/dbConfig';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MongoConnectionOptions } from 'typeorm/driver/mongodb/MongoConnectionOptions';
-import { User, UserModel } from './entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './products/products.module';
 import { UsersModule } from './users/users.module';
