@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsOptional, ValidateNested} from "class-validator";
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { ProductDescriptionDto } from 'src/dto/product/productDescription.dto';
+import { ProductDescriptionDto } from '../dto/product/productDescription.dto';
 import { Type } from 'class-transformer';
-import { ProductContactInfo } from 'src/dto/product/productContactInfo.dto';
-import { ProductNameInfo } from 'src/dto/product/prodcutNameInfo.dto';
-import { CategoryNameInfo } from 'src/dto/category/categoryName.dto';
+import { ProductContactInfo } from '../dto/product/productContactInfo.dto';
+import { ProductNameInfo } from '../dto/product/prodcutNameInfo.dto';
+import { CategoryNameInfo } from '../dto/category/categoryName.dto';
 import { MImage } from './image.entity';
 @Schema()
 export class Product extends Document {

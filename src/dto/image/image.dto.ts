@@ -1,5 +1,5 @@
 import { ApiResponseProperty } from '@nestjs/swagger';
-import { MImage } from 'src/entities/image.entity';
+import { MImage } from '../../entities/image.entity';
 
 
 export class ImageDto {

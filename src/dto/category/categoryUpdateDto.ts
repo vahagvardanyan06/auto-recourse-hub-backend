@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional, ApiResponseProperty } from '@nestjs/swagger';
-import { IsOptional, IsNotEmpty, IsUrl, IsArray } from 'class-validator';
+import { ApiPropertyOptional, ApiResponseProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 import { ImageDto } from '../image/image.dto';
 import { CategoryNameInfo } from './categoryName.dto';
 

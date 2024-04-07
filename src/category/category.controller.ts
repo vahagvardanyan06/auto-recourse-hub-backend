@@ -1,16 +1,15 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpStatus, Param, ParseFilePipe, Patch, Post, UploadedFile, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CategoryDto } from 'src/dto/category/category.dto';
+import { CategoryDto } from '../dto/category/category.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllExceptionsFilter } from 'src/filter/all.exception.filter';
-import { JwtGuard } from 'src/guards/jwt.guard';
-import { RoleGuard } from 'src/guards/role.guard';
-import { ObjectIdValidationPipe } from 'src/pipes/object-id-validation.pipe';
-import { CategoryUpdateDto } from 'src/dto/category/categoryUpdateDto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { log } from 'console';
-import { Roles } from 'src/decorators/role.decorator';
-import { UserRoles } from 'src/enums/Roles.enum';
+import { AllExceptionsFilter } from '../filter/all.exception.filter';
+import { JwtGuard } from '../guards/jwt.guard';
+import { RoleGuard } from '../guards/role.guard';
+import { ObjectIdValidationPipe } from '../pipes/object-id-validation.pipe';
+import { CategoryUpdateDto } from '../dto/category/categoryUpdateDto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from '../decorators/role.decorator';
+import { UserRoles } from '../enums/Roles.enum';
 
 @UseFilters(AllExceptionsFilter)
 @ApiTags('Category')

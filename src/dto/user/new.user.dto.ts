@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
-import { User } from 'src/entities/user.entity';
-import { UserRoles } from 'src/enums/Roles.enum';
+import { User } from '../../entities/user.entity';
+import { UserRoles } from '../../enums/Roles.enum';
 
 
 export class NewUserDto {

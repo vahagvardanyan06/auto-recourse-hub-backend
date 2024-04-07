@@ -2,16 +2,16 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Product, ProductModel } from 'src/entities/product.entity';
+import { Product, ProductModel } from '../entities/product.entity';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/users/users.service';
-import { User, UserModel } from 'src/entities/user.entity';
+import { UserService } from '../users/users.service';
+import { User, UserModel } from '../entities/user.entity';
 import { MulterModule } from '@nestjs/platform-express';
-import { Category, CategoryModel } from 'src/entities/category.entity';
-import { CategoryService } from 'src/category/category.service';
-import { S3Service } from 'src/s3Service/s3.service';
-import { ImageModel, MImage } from 'src/entities/image.entity';
-import { ImageService } from 'src/imageService/image.service';
+import { Category, CategoryModel } from '../entities/category.entity';
+import { CategoryService } from '../category/category.service';
+import { S3Service } from '../s3Service/s3.service';
+import { ImageModel, MImage } from '../entities/image.entity';
+import { ImageService } from '../imageService/image.service';
 
 
 

@@ -1,11 +1,10 @@
-import { HttpStatus, Injectable, NotFoundException, UseFilters } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { MImage } from 'src/entities/image.entity';
+import { MImage } from '../entities/image.entity';
 import { Model } from 'mongoose';
-import { S3Service } from 'src/s3Service/s3.service';
+import { S3Service } from '../s3Service/s3.service';
 import * as querystring from 'querystring';
 import * as path from 'path'
-import { ImageDto } from 'src/dto/image/image.dto';
 
 @Injectable()
 export class ImageService {

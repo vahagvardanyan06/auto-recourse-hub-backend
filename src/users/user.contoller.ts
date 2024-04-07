@@ -1,15 +1,15 @@
-import { Body, Controller,Get, HttpCode, HttpStatus, NotFoundException, Param, ParseFilePipe, Patch, Post, Put, Res, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller,Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './users.service';
-import { UserRoles } from 'src/enums/Roles.enum';
+import { UserRoles } from '../enums/Roles.enum';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ErrorMessages } from 'src/constants/constants';
-import { JwtGuard } from 'src/guards/jwt.guard';
-import { RoleGuard } from 'src/guards/role.guard';
-import { Roles } from 'src/decorators/role.decorator';
-import { ObjectIdValidationPipe } from 'src/pipes/object-id-validation.pipe';
-import { NewUserDto } from 'src/dto/user/new.user.dto';
-import { UserUpdateDto } from 'src/dto/user/update.user.dto';
-import { UserDto } from 'src/dto/user/existing.user.dto';
+import { ErrorMessages } from '../constants/constants';
+import { JwtGuard } from '../guards/jwt.guard';
+import { RoleGuard } from '../guards/role.guard';
+import { Roles } from '../decorators/role.decorator';
+import { ObjectIdValidationPipe } from '../pipes/object-id-validation.pipe';
+import { NewUserDto } from '../dto/user/new.user.dto';
+import { UserUpdateDto } from '../dto/user/update.user.dto';
+import { UserDto } from '../dto/user/existing.user.dto';
 
 
 @ApiTags("User")

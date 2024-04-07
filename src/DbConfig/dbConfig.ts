@@ -1,5 +1,5 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from 'src/entities/user.entity';
+
 
 export const configService : TypeOrmModule = {
   type: 'mongodb',

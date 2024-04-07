@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNotEmpty, IsString, IsUrl, ValidateNested, isNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Product } from './product.entity';
 import { Document } from 'mongoose';
-import { CategoryNameInfo } from 'src/dto/category/categoryName.dto';
+import { CategoryNameInfo } from '../dto/category/categoryName.dto';
 import { Type } from 'class-transformer';
 import { MImage } from './image.entity';
 

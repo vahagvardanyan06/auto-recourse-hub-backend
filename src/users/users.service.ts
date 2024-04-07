@@ -2,12 +2,11 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../entities/user.entity'
-import { UserRoles } from 'src/enums/Roles.enum';
-import { ErrorMessages } from 'src/constants/constants';
-import { S3Service } from 'src/s3Service/s3.service';
-import { UserUpdateDto } from 'src/dto/user/update.user.dto';
-import { NewUserDto } from 'src/dto/user/new.user.dto';
-import { UserDto } from 'src/dto/user/existing.user.dto';
+import { UserRoles } from '../enums/Roles.enum';
+import { ErrorMessages } from '../constants/constants';
+import { UserUpdateDto } from '../dto/user/update.user.dto';
+import { NewUserDto } from '../dto/user/new.user.dto';
+import { UserDto } from '../dto/user/existing.user.dto';
 @Injectable()
 export class UserService {
         constructor (

@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 
 @Schema()

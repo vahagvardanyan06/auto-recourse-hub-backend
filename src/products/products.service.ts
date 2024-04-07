@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Product } from 'src/entities/product.entity';
+import { Product } from '../entities/product.entity';
 import { Model } from 'mongoose';
-import { ProductDto } from 'src/dto/product/product.dto';
-import { ErrorMessages } from 'src/constants/constants';
-import { UpdateProductDto } from 'src/dto/product/updateProduct.dto';
-import { CategoryService } from 'src/category/category.service';
-import { ImageService } from 'src/imageService/image.service';
-import { MImage } from 'src/entities/image.entity';
+import { ProductDto } from '../dto/product/product.dto';
+import { ErrorMessages } from '../constants/constants';
+import { UpdateProductDto } from '../dto/product/updateProduct.dto';
+import { CategoryService } from '../category/category.service';
+import { ImageService } from '../imageService/image.service';
+import { MImage } from '../entities/image.entity';
 @Injectable()
 export class ProductsService {
   constructor(

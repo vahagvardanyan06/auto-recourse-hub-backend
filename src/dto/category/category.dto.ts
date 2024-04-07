@@ -1,12 +1,11 @@
 import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUrl, ValidateNested } from 'class-validator';
-import { Category } from 'src/entities/category.entity';
-import { Product } from 'src/entities/product.entity';
+import { IsNotEmpty, IsOptional,ValidateNested } from 'class-validator';
+import { Category } from '../../entities/category.entity';
+import { Product } from '../../entities/product.entity';
 import { CategoryNameInfo } from './categoryName.dto';
 import { Type } from 'class-transformer';
 import { ProductDto } from '../product/product.dto';
 import { ImageDto } from '../image/image.dto';
-import { MImage } from 'src/entities/image.entity';
 import { FILE } from 'dns';
 
 

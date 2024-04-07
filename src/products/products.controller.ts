@@ -1,16 +1,15 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, ParseFilePipe, Patch, Post, Put, Query, Req, Res, UploadedFile, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllExceptionsFilter } from 'src/filter/all.exception.filter';
+import { AllExceptionsFilter } from '../filter/all.exception.filter';
 import { ProductsService } from './products.service';
-import { ProductDto } from 'src/dto/product/product.dto';
-import { Roles } from 'src/decorators/role.decorator';
-import { UserRoles } from 'src/enums/Roles.enum';
-import { JwtGuard } from 'src/guards/jwt.guard';
-import { RoleGuard } from 'src/guards/role.guard';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { Request, Response } from 'express';
-import { UpdateProductDto } from 'src/dto/product/updateProduct.dto';
-import { ObjectIdValidationPipe } from 'src/pipes/object-id-validation.pipe';
+import { ProductDto } from '../dto/product/product.dto';
+import { Roles } from '../decorators/role.decorator';
+import { UserRoles } from '../enums/Roles.enum';
+import { JwtGuard } from '../guards/jwt.guard';
+import { RoleGuard } from '../guards/role.guard';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { UpdateProductDto } from '../dto/product/updateProduct.dto';
+import { ObjectIdValidationPipe } from '../pipes/object-id-validation.pipe';
 @UseFilters(AllExceptionsFilter)
 @Controller('products')
 @ApiTags('Products')

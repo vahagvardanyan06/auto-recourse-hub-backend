@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+export async function bootstrap() {
+ const app = await NestFactory.create(AppModule);
   const options = new DocumentBuilder()
     .addBearerAuth(
       {
@@ -19,13 +19,15 @@ async function bootstrap() {
     .setTitle('Auto-recourse-hub')
     .setDescription('Your API description')
     .setVersion('1.0')
-    .addServer(process.env.DEV_URL, 'Local environment')
+    // .addServer(process.env.DEV_URL, 'Local environment')
     .build();
-    app.enableCors();
+    app.enableCors({
+      origin : '*',
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    });
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true }));
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api-docs', app, document);
-
-    await app.listen(process.env.PORT);
+    await app.listen(3002);
 }
 bootstrap();
