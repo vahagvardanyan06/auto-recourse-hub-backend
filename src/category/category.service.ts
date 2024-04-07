@@ -48,7 +48,6 @@ export class CategoryService {
   async createCategory (categoryDto : CategoryDto, logo : Express.Multer.File) : Promise<CategoryDto> {
       const { category_name } = categoryDto;
       const isCategoryExist = await this.findByDisplayName(category_name);
-
       if (isCategoryExist) {
         throw new HttpException("Category already exist", HttpStatus.BAD_REQUEST)
       }
@@ -74,6 +73,9 @@ export class CategoryService {
   }
 
     async findCategoryById (id : string) : Promise<Category | null> {
+      if (!id) {
+        throw new HttpException('Id doesnt provid', HttpStatus.BAD_REQUEST)
+      }
       return await this.category_model.findById(id)
       .populate('logo_url')
       .populate({
@@ -145,6 +147,12 @@ export class CategoryService {
     const category = await this.category_model.findById(categoryId);
     if (!category) {
       throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
+    }
+    if (category.products) {
+      const deletedProducts = category.products.map(async (each : Product) => {
+        await this.productService.deleteProduct(each._id);
+      })
+      Promise.all(deletedProducts);
     }
     await this.imageService.deleteImage( category.logo_url._id);
     await this.category_model.deleteOne({ _id : categoryId });

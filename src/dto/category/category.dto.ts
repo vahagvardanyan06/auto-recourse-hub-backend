@@ -35,10 +35,8 @@ export class CategoryDto {
     const categoryDto = new CategoryDto();
     categoryDto.name = categoryEntity.name;
     categoryDto.category_name = categoryEntity.category_name;
-    console.log(categoryEntity.logo_url);
-    
     categoryDto.logo_url = ImageDto.convertToDto(categoryEntity.logo_url);
-    if (includeProducts) {
+    if (includeProducts && categoryEntity.products && categoryEntity.products.length) {
       categoryDto.products = categoryEntity.products.map((each : Product) => {
         return ProductDto.convertToDto(each);
       });
