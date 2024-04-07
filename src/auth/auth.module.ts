@@ -7,7 +7,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { RoleGuard } from 'src/guards/role.guard';
 import { JwtService } from '@nestjs/jwt';
-import { LocalGuard } from 'src/guards/local.guard';
 
 @Module({
   imports : [
@@ -20,7 +19,7 @@ import { LocalGuard } from 'src/guards/local.guard';
   })
 ],
   
-  providers : [LocalStrategy,LocalGuard, AuthService, RoleGuard, JwtService],
+  providers : [LocalStrategy, AuthService, RoleGuard, JwtService],
   controllers: [AuthController]
 })
 export class AuthModule {}
