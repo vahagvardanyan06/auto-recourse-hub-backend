@@ -20,13 +20,12 @@ async function bootstrap() {
     .setDescription('Your API description')
     .setVersion('1.0')
     .addServer(process.env.DEV_URL, 'Local environment')
-    .addServer(process.env.DEV_URL, 'Local environment')
     .build();
     app.enableCors();
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true }));
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api-docs', app, document);
 
-    await app.listen(3002);
+    await app.listen(process.env.PORT);
 }
 bootstrap();
