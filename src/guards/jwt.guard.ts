@@ -14,9 +14,6 @@ export class JwtGuard  {
     async canActivate(context: ExecutionContext) : Promise<boolean> {
         const request = context.switchToHttp().getRequest<Request>();
         const token = this.extractToken(request);
-        console.log(request.headers.authorization);
-        
-        console.log(token);
         
         if (!token) {
             throw new UnauthorizedException();
