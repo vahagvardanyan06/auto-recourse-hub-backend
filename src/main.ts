@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { SecuritySchemeObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 export async function bootstrap() {
- const app = await NestFactory.create(AppModule);
+const app = await NestFactory.create(AppModule);
   const options = new DocumentBuilder()
     .addBearerAuth(
       {
@@ -28,6 +28,6 @@ export async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true }));
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api-docs', app, document);
-    await app.listen(3002);
+    await app.listen(process.env.PORT);
 }
 bootstrap();

@@ -15,7 +15,6 @@ export class CategoryService {
 
   constructor (
     @InjectModel(Category.name) private readonly category_model: Model<Category>,
-    // private productService : ProductsService,
     @Inject(forwardRef(() => ProductsService)) private productService: ProductsService,
     private imageService : ImageService
   ) {}
@@ -66,6 +65,7 @@ export class CategoryService {
   async getAllCategories () : Promise<CategoryDto | CategoryDto[] | [] | any> {
       const allCategories = await this.category_model.find()
       .populate('logo_url')
+      
       if (!allCategories) {
           return [];
       } 
@@ -74,7 +74,7 @@ export class CategoryService {
 
     async findCategoryById (id : string) : Promise<Category | null> {
       if (!id) {
-        throw new HttpException('Id doesnt provid', HttpStatus.BAD_REQUEST)
+        throw new HttpException('Id doesnt provided', HttpStatus.BAD_REQUEST)
       }
       return await this.category_model.findById(id)
       .populate('logo_url')
