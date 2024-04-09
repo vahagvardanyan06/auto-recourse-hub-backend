@@ -103,7 +103,7 @@ export class CategoryService {
       return CategoryDto.convertToDto(category, true);
   }
 
-  async updateCategory (categoryId : string, categoryDto : CategoryUpdateDto, logo? : Express.Multer.File ) : Promise<CategoryDto | NotFoundException> {
+  async updateCategory (categoryId : string, categoryDto : CategoryUpdateDto, logo? : Express.Multer.File ) : Promise<{status : HttpStatus} | NotFoundException> {
     const existingCategory = await this.findCategoryById(categoryId);
     if (!existingCategory) {
         return new NotFoundException("Category not found")
@@ -125,7 +125,9 @@ export class CategoryService {
       { _id: categoryId },
       { $set: updatedOne },
     ).populate('logo_url'); 
-    return CategoryDto.convertToDto(updatedOne, false);
+    return {
+      status : HttpStatus.OK
+    }
   }
 
   async getCategoryWithName (name : string) : Promise<CategoryDto | NotFoundException> {

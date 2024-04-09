@@ -72,7 +72,6 @@ export class CategoryController {
   @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provied id' })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({ type : CategoryUpdateDto })
   @Roles([UserRoles.Admin])
   @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FileInterceptor('logo'))
