@@ -81,7 +81,7 @@ export class ProductsController {
 
   @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Update Product' })
-  @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provied id', type : ProductDto })
+  @ApiResponse({ status : HttpStatus.OK, description : 'Update a Product with provided id', type : ProductDto })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
   @HttpCode(HttpStatus.OK)
   @Roles([UserRoles.Admin])

@@ -23,7 +23,7 @@ const app = await NestFactory.create(AppModule);
     .build();
     app.enableCors({
       origin : '*',
-      methods: ["GET", "POST", "PUT", "DELETE"],
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     });
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true }));
     const document = SwaggerModule.createDocument(app, options);
