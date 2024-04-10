@@ -15,7 +15,7 @@ export class ImageDto {
     const newImage = new ImageDto();
     newImage.id = imageEntity._id;
     newImage.url = imageEntity.url;
-
+    
     return newImage;
   }
  }

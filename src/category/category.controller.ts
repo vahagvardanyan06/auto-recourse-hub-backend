@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseFilePipeBuilder, Patch, Post, UploadedFile, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryDto } from '../dto/category/category.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -10,6 +10,7 @@ import { CategoryUpdateDto } from '../dto/category/categoryUpdateDto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from '../decorators/role.decorator';
 import { UserRoles } from '../enums/Roles.enum';
+import { IsNotEmpty } from 'class-validator';
 
 @UseFilters(AllExceptionsFilter)
 @ApiTags('Category')
@@ -31,15 +32,20 @@ export class CategoryController {
   @UseInterceptors(FileInterceptor('logo'))
   @Post()
   createCategory (
-    @UploadedFile() logo:  Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+      .build({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+      }),
+    )  logo:  Express.Multer.File,
     @Body() categoryDto : CategoryDto,
   ) {
     return this.categoryService.createCategory(categoryDto, logo); 
   }
 
   @ApiOperation({ summary : "Get category with name"})
-  @ApiResponse({ status : HttpStatus.OK, description : "Retun category with name", type : CategoryDto })
-  @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return not found if catgeory nor found'})
+  @ApiResponse({ status : HttpStatus.OK, description : "Return category with name", type : CategoryDto })
+  @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return not found if category nor found'})
   @ApiParam({ name: 'name', description: 'Category name', type: 'string' })
   @Get('name/:name')
   getCategoryWithName (

@@ -55,7 +55,7 @@ export class ProductsService {
     const product = await this.productModel.findById(productId)
     .populate('images')
     if (!product) {
-      throw new NotFoundException(ErrorMessages.notFound)
+      throw new HttpException({message : 'Product not found' }, HttpStatus.NOT_FOUND)
     } 
      return ProductDto.convertToDto(product);
   }
@@ -64,7 +64,7 @@ export class ProductsService {
 async deleteProduct (productId : string) {
   const product = await this.productModel.findById(productId);
   if (!product) {
-    throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    throw new HttpException({message : 'Product not found' }, HttpStatus.NOT_FOUND);
   }
   await this.productModel.deleteOne({ _id : productId }) 
   
@@ -107,23 +107,23 @@ async deleteProduct (productId : string) {
     const product = await this.productModel.findById(productId)
     .populate('images');
     if (!product) {
-      throw new NotFoundException(ErrorMessages.notFound)
+      throw new HttpException({message : 'Product not found' }, HttpStatus.NOT_FOUND);
     }
    
     if (images) {
       const imagesToDelete = updatedDto.imageIds;
       if (imagesToDelete && imagesToDelete.length) {
-         const deletedPromsies =  product.images.map(async (each : any) => {
+         const deletedPromises =  product.images.map(async (each : any) => {
             if (imagesToDelete.includes(each._id.toString())) {
               await this.imageService.deleteImage(each._id);
           }
           })
-          Promise.all(deletedPromsies);
+          Promise.all(deletedPromises);
       }
-      const addedIamges = images.map(async (each : Express.Multer.File) => {
+      const addedImages = images.map(async (each : Express.Multer.File) => {
        return product.images.push(await this.imageService.saveImages(each));
       })
-      await Promise.all(addedIamges);
+      await Promise.all(addedImages);
     }
     Object.entries(updatedDto).forEach(([key, value]) => {
         if (typeof value === 'object' && !Array.isArray(value)) {

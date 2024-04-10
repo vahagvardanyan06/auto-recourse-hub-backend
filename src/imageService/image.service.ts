@@ -27,6 +27,8 @@ export class ImageService {
   async deleteImage (imageId : string) {
     const image =  await this.findImageWithId(imageId);
     if (!image) {
+      console.log('no image');
+      
       return;
     };
     await this.imageModel.deleteOne({ _id : image._id })

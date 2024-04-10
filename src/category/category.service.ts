@@ -48,7 +48,7 @@ export class CategoryService {
       const { category_name } = categoryDto;
       const isCategoryExist = await this.findByDisplayName(category_name);
       if (isCategoryExist) {
-        throw new HttpException("Category already exist", HttpStatus.BAD_REQUEST)
+        throw new HttpException({message : "Category already exist" }, HttpStatus.BAD_REQUEST)
       }
       const { us } = category_name;
       const modifiedUsName = us.replace(/\s+/g, '_').toLowerCase();
@@ -110,8 +110,8 @@ export class CategoryService {
     }
     if (logo) {
       await this.imageService.deleteImage(existingCategory.logo_url._id);
-      existingCategory.logo_url =  await this.imageService.saveImages(logo);
-    } 
+      existingCategory.logo_url = await this.imageService.saveImages(logo);
+    }
     if (categoryDto.category_name) {
       Object.keys(categoryDto.category_name).forEach(key => {
         if (categoryDto.category_name[key] !== undefined) {
@@ -133,7 +133,7 @@ export class CategoryService {
   async getCategoryWithName (name : string) : Promise<CategoryDto | NotFoundException> {
     const category = await this.findByName(name);
     if (!category) {
-      throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
+      throw new HttpException({ message : "Category not found" }, HttpStatus.NOT_FOUND)
     }
     return CategoryDto.convertToDto(category,true);
   }
