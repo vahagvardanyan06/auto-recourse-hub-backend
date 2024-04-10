@@ -8,7 +8,7 @@ import { MImage } from './image.entity';
 
 @Schema()
 export class Category extends Document {
-  @Prop({ type: 'ObjectId', ref: 'MImage' }) // Establishing a reference to MImage model
+  @Prop({ type: 'ObjectId', ref: 'MImage' })
   logo_url: MImage;
   
   @ValidateNested()

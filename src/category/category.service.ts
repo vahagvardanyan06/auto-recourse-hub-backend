@@ -48,7 +48,7 @@ export class CategoryService {
       const { category_name } = categoryDto;
       const isCategoryExist = await this.findByDisplayName(category_name);
       if (isCategoryExist) {
-        throw new HttpException({message : "Category already exist" }, HttpStatus.BAD_REQUEST)
+        throw new HttpException({ message : "Category already exist" }, HttpStatus.BAD_REQUEST)
       }
       const { us } = category_name;
       const modifiedUsName = us.replace(/\s+/g, '_').toLowerCase();
@@ -74,7 +74,7 @@ export class CategoryService {
 
     async findCategoryById (id : string) : Promise<Category | null> {
       if (!id) {
-        throw new HttpException('Id doesnt provided', HttpStatus.BAD_REQUEST)
+        throw new HttpException({ message : "Id doesnt provided" }, HttpStatus.BAD_REQUEST)
       }
       return await this.category_model.findById(id)
       .populate('logo_url')
@@ -98,7 +98,7 @@ export class CategoryService {
       }
     });
       if (!category) {
-        throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
+        throw new HttpException({ message : "Category not found" }, HttpStatus.NOT_FOUND)
       }
       return CategoryDto.convertToDto(category, true);
   }
@@ -106,7 +106,7 @@ export class CategoryService {
   async updateCategory (categoryId : string, categoryDto : CategoryUpdateDto, logo? : Express.Multer.File ) : Promise<{status : HttpStatus} | NotFoundException> {
     const existingCategory = await this.findCategoryById(categoryId);
     if (!existingCategory) {
-        return new NotFoundException("Category not found")
+        return new HttpException({ message : "Category not found" }, HttpStatus.NOT_FOUND)
     }
     if (logo) {
       await this.imageService.deleteImage(existingCategory.logo_url._id);
@@ -148,7 +148,7 @@ export class CategoryService {
   async deleteCategory(categoryId : string) : Promise<CategoryDto | any> {
     const category = await this.category_model.findById(categoryId);
     if (!category) {
-      throw new HttpException("Category not found", HttpStatus.NOT_FOUND)
+      throw new HttpException({ message : "Category not found" }, HttpStatus.NOT_FOUND)
     }
     if (category.products) {
       const deletedProducts = category.products.map(async (each : Product) => {
@@ -169,13 +169,13 @@ export class CategoryService {
       );
 
       if (updatedCategory.modifiedCount === 0) {
-        throw new HttpException('Product not found in Category\'s products array', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException({ message : "Product not found in Category\'s products array" }, HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
       const category = await this.category_model.findById(categoryId);
       return category;
     } catch (error) {
-      throw new Error(`Failed to remove product from category: ${error.message}`);
+      throw new HttpException({message : `Failed to remove product from category: ${error.message}` }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

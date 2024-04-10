@@ -29,13 +29,13 @@ export class UserService {
                 { $pull: { products: productId } }
               );
         
-              if (updatedUser.modifiedCount === 0) {
-                throw new Error('Product not found in user\'s products array');
+              if (!updatedUser.modifiedCount) {
+                throw new HttpException({ message : 'Product not found in user\'s products array' }, HttpStatus.NOT_FOUND );
               }
               const user = await this.userModel.findById(userId);
               return user;
             } catch (error) {
-              throw new Error(`Failed to remove product from user: ${error.message}`);
+              throw new HttpException({message  : `Failed to remove product from user: ${error.message}`}, HttpStatus.INTERNAL_SERVER_ERROR);
             }
           }
 
@@ -43,7 +43,7 @@ export class UserService {
             const { email, password, name, phoneNumber } = userDto;
             const isExist = await this.findByEmail(email);
             if (isExist) {
-              throw new HttpException('User already exist', HttpStatus.BAD_REQUEST);
+              throw new HttpException({ message : 'User already exist' }, HttpStatus.BAD_REQUEST);
             } 
             const newUser = await this.userModel.create ({
               name,
@@ -58,7 +58,7 @@ export class UserService {
           async updateUser (userId : string, userDto : UserUpdateDto) {
             const user = await this.findById(userId);
             if (!user) {
-              throw new HttpException(`User with id ${userId} not found`, HttpStatus.NOT_FOUND)
+              throw new HttpException({ message : `User with id ${userId} not found` }, HttpStatus.NOT_FOUND)
             };
             let updateData: Partial<User> = { ...userDto};
             const updatedUser = await this.userModel.findByIdAndUpdate(user, { ...updateData }, { new: true }).select('-password -roles');
@@ -68,7 +68,7 @@ export class UserService {
           async getAll() : Promise<UserDto | UserDto[] | []> {
             const users = await this.userModel.find();
             if (!users.length) {
-              throw new HttpException(ErrorMessages.notFound, HttpStatus.NOT_FOUND)
+              throw new HttpException({message : 'Users not found' }, HttpStatus.NOT_FOUND)
             }
             return users.map((each : User) => {
               return UserDto.convertToDto(each);

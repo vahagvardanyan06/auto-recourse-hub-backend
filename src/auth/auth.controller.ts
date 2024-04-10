@@ -26,7 +26,7 @@ export class AuthController {
     @UseGuards(LocalGuard, RoleGuard)
     @UsePipes(new ValidationPipe({ forbidUnknownValues  : false}))
     @Post(Route.signIn)
-    async signin (
+    async signIn (
         @Body() loginDto : LoginDto,
     ) : Promise<{ token :  string }> {
          return await this.authService.login(loginDto); 

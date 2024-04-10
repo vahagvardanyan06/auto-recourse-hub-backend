@@ -13,8 +13,8 @@ export class ImageService {
     private s3Service : S3Service
   ) {}
 
-  private  findImageWithId (id : string) {
-    return  this.imageModel.findById(id);
+  private findImageWithId (id : string) {
+    return this.imageModel.findById(id);
   }
 
   async saveImages(imageFile: Express.Multer.File) {
@@ -27,8 +27,6 @@ export class ImageService {
   async deleteImage (imageId : string) {
     const image =  await this.findImageWithId(imageId);
     if (!image) {
-      console.log('no image');
-      
       return;
     };
     await this.imageModel.deleteOne({ _id : image._id })

@@ -24,7 +24,7 @@ export class ProductsService {
     const { categoryId,  topSale, ...productData } = productDto;
     const category = await this.categoryService.findCategoryById(categoryId);
     if (!category) {
-      throw new NotFoundException('Category not found');
+      throw new HttpException( { message : 'Category not found' }, HttpStatus.NOT_FOUND);
     }
      const product = await this.productModel.create({
       ...productData,
@@ -107,7 +107,7 @@ async deleteProduct (productId : string) {
     const product = await this.productModel.findById(productId)
     .populate('images');
     if (!product) {
-      throw new HttpException({message : 'Product not found' }, HttpStatus.NOT_FOUND);
+      throw new HttpException({ message : 'Product not found' }, HttpStatus.NOT_FOUND);
     }
    
     if (images) {
