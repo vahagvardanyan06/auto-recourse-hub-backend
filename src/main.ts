@@ -28,6 +28,7 @@ const app = await NestFactory.create(AppModule);
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true }));
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api-docs', app, document);
+    Logger.log(`Listening to port ${process.env.PORT}`)
     await app.listen(process.env.PORT);
 }
 bootstrap();
