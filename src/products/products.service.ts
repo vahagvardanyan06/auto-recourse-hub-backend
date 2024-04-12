@@ -109,10 +109,22 @@ async deleteProduct (productId : string) {
     if (!product) {
       throw new HttpException({ message : 'Product not found' }, HttpStatus.NOT_FOUND);
     }
+    if (updatedDto.imageIds && Array.isArray(updatedDto.imageIds) && !Boolean(images.length)) {
+        const imagesToDelete = updatedDto.imageIds;
+        const deletedPromises =  product.images.map(async (each : any) => {
+            if (imagesToDelete.includes(each._id.toString())) {
+                await this.imageService.deleteImage(each._id);
+            }
+        })
+        Promise.all(deletedPromises);
+    }
+
    
     if (images) {
-      const imagesToDelete = updatedDto.imageIds;
-      if (imagesToDelete && imagesToDelete.length) {
+
+
+      const imagesToDelete =  updatedDto.imageIds && Boolean(updatedDto.imageIds.length) ? updatedDto.imageIds : null;
+      if (imagesToDelete && Array.isArray(imagesToDelete)) {
          const deletedPromises =  product.images.map(async (each : any) => {
             if (imagesToDelete.includes(each._id.toString())) {
               await this.imageService.deleteImage(each._id);

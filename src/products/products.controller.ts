@@ -73,10 +73,10 @@ export class ProductsController {
   @Roles([UserRoles.Admin])
   @UseGuards(JwtGuard, RoleGuard)
   @Delete(':id')
-  async deleteProduct (
+  deleteProduct (
     @Param('id') productId : string,
   ) {
-    return await this.productService.deleteProduct(productId);
+    return this.productService.deleteProduct(productId);
   }
 
   @ApiBearerAuth('auto-recourse-hub')
@@ -88,11 +88,11 @@ export class ProductsController {
   @UseGuards(JwtGuard, RoleGuard)
   @UseInterceptors(FilesInterceptor('images'))
   @Patch(':id')
-  async updateProduct (
+  updateProduct (
     @Param('id', ObjectIdValidationPipe) productId : string,
     @Body() updateDto : UpdateProductDto, 
     @UploadedFiles() images?:  Array<Express.Multer.File>,
   ) {
-    return await this.productService.updateProduct(productId, updateDto, images);
+    return this.productService.updateProduct(productId, updateDto, images);
   }
 }
