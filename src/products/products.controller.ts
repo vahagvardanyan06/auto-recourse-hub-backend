@@ -17,6 +17,16 @@ export class ProductsController {
   constructor (private readonly productService : ProductsService,
     ) {}
 
+
+  @ApiOperation({ summary : 'Search Product'})
+  @ApiResponse({ status : HttpStatus.OK, description : "Return a founded product", type : [ProductDto] })
+  @Get("/search")
+  searchProduct (
+      @Query('productName') searchText : string
+  ) {
+    return this.productService.searchProduct(searchText);
+  }
+
   @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Create Product'})
   @ApiBody({ type : ProductDto })
@@ -34,7 +44,7 @@ export class ProductsController {
   }
 
   
-  @ApiOperation({ summary : 'Get all Prouducts'})
+  @ApiOperation({ summary : 'Get all Products'})
   @ApiResponse({ status : HttpStatus.OK, description : 'Return all products if products not found return []'})
   @ApiResponse({ type : [ProductDto] || ProductDto })
   @HttpCode(HttpStatus.OK)
@@ -95,4 +105,6 @@ export class ProductsController {
   ) {
     return this.productService.updateProduct(productId, updateDto, images);
   }
+
+
 }

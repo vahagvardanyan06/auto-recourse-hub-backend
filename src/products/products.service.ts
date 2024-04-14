@@ -11,10 +11,12 @@ import { MImage } from '../entities/image.entity';
 @Injectable()
 export class ProductsService {
   constructor(
+
     @InjectModel(Product.name) private readonly productModel : Model<Product>,
     @Inject(forwardRef(() => CategoryService)) private categoryService: CategoryService,
-    private imageService : ImageService
-  ) {}
+    private imageService : ImageService,
+  ) {
+  }
 
   private parseBoolean(value: string): boolean {
     return value.toLowerCase() === 'true';
@@ -119,10 +121,7 @@ async deleteProduct (productId : string) {
         Promise.all(deletedPromises);
     }
 
-   
     if (images) {
-
-
       const imagesToDelete =  updatedDto.imageIds && Boolean(updatedDto.imageIds.length) ? updatedDto.imageIds : null;
       if (imagesToDelete && Array.isArray(imagesToDelete)) {
          const deletedPromises =  product.images.map(async (each : any) => {
@@ -165,5 +164,22 @@ async deleteProduct (productId : string) {
     return topSaleProducts.map((each : Product) => {
       return ProductDto.convertToDto(each); 
     })
+  }
+
+
+  async searchProduct (searchText : string) : Promise<ProductDto[] | []> {
+      const products = await this.productModel.find({
+          $or: [
+              { 'product_name.am': { $regex: searchText, $options: 'i' } },
+              { 'product_name.ru': { $regex: searchText, $options: 'i' } },
+              { 'product_name.us': { $regex: searchText, $options: 'i' } },
+          ]
+      });
+      if (!products.length) {
+          return [];
+      }
+    return products.map((each : Product) => {
+          return ProductDto.convertToDto(each);
+      })
   }
 }
