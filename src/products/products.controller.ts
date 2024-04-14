@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query, UploadedFiles, UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { AllExceptionsFilter } from '../filter/all.exception.filter';
 import { ProductsService } from './products.service';
 import { ProductDto } from '../dto/product/product.dto';
@@ -20,6 +20,7 @@ export class ProductsController {
 
   @ApiOperation({ summary : 'Search Product'})
   @ApiResponse({ status : HttpStatus.OK, description : "Return a founded product", type : [ProductDto] })
+  @ApiQuery({ name: 'productName', description: 'Name of the product to search', example: 'Product name', type: String })
   @Get("/search")
   searchProduct (
       @Query('productName') searchText : string
