@@ -19,12 +19,13 @@ const app = await NestFactory.create(AppModule);
     .setTitle('Auto-recourse-hub')
     .setDescription('Your API description')
     .setVersion('1.0')
-    // .addServer(process.env.DEV_URL, 'Local environment')
+    .addServer('/api')
     .build();
     app.enableCors({
-      origin : '*',
+      origin : 'http://example.flan',
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     });
+    app.setGlobalPrefix('api');
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true }));
     const document = SwaggerModule.createDocument(app, options);
     SwaggerModule.setup('api-docs', app, document);

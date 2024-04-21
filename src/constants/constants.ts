@@ -18,15 +18,6 @@ export const ErrorMessages = {
 
 
 
-export class UserAvatarRequestBody  {
-    @ApiProperty({ name : 'userId', type : String, required : true })
-    @IsNotEmpty()
-    userId : string
-
-    @ApiProperty({ name : 'fileName', type : String, required : true})
-    @IsNotEmpty()
-    fileName : String
-}
 
 
 

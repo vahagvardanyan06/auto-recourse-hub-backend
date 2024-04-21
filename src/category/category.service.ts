@@ -9,6 +9,7 @@ import { MImage } from '../entities/image.entity';
 import { ImageService } from '../imageService/image.service';
 import { Product } from '../entities/product.entity';
 import { ProductsService } from '../products/products.service';
+import { IResponse } from 'src/interfaces/response.interface';
 
 @Injectable()
 export class CategoryService {
@@ -33,18 +34,18 @@ export class CategoryService {
 
 
   private async findByName(name : string) {
-    return await this.category_model.findOne({ name })
-    .populate('logo_url')
-    .populate({
-      path: 'products',
-      populate: {
-        path: 'images', 
-        model: `${MImage.name}`,
-      }
-    });
+    return this.category_model.findOne({name})
+        .populate('logo_url')
+        .populate({
+          path: 'products',
+          populate: {
+            path: 'images',
+            model: `${MImage.name}`,
+          }
+        });
   }
 
-  async createCategory (categoryDto : CategoryDto, logo : Express.Multer.File) : Promise<CategoryDto> {
+  async createCategory (categoryDto : CategoryDto, logo : Express.Multer.File) : Promise<IResponse> {
       const { category_name } = categoryDto;
       const isCategoryExist = await this.findByDisplayName(category_name);
       if (isCategoryExist) {
@@ -54,15 +55,19 @@ export class CategoryService {
       const modifiedUsName = us.replace(/\s+/g, '_').toLowerCase();
       const image = await this.imageService.saveImages(logo);
       
-      const newCategory = await this.category_model.create({
+      await this.category_model.create({
         category_name,
         logo_url : image,
         name : modifiedUsName
       });
-      return CategoryDto.convertToDto(await newCategory.save(), false);
+
+      return {
+        statusCode : HttpStatus.CREATED,
+        success : true
+      };
   }
 
-  async getAllCategories () : Promise<CategoryDto | CategoryDto[] | [] | any> {
+  async getAllCategories () : Promise<CategoryDto | CategoryDto[] | []> {
       const allCategories = await this.category_model.find()
       .populate('logo_url')
       
@@ -103,7 +108,7 @@ export class CategoryService {
       return CategoryDto.convertToDto(category, true);
   }
 
-  async updateCategory (categoryId : string, categoryDto : CategoryUpdateDto, logo? : Express.Multer.File ) : Promise<{status : HttpStatus} | NotFoundException> {
+  async updateCategory (categoryId : string, categoryDto : CategoryUpdateDto, logo? : Express.Multer.File ) : Promise<IResponse| NotFoundException> {
     const existingCategory = await this.findCategoryById(categoryId);
     if (!existingCategory) {
         return new HttpException({ message : "Category not found" }, HttpStatus.NOT_FOUND)
@@ -126,7 +131,8 @@ export class CategoryService {
       { $set: updatedOne },
     ).populate('logo_url'); 
     return {
-      status : HttpStatus.OK
+      statusCode : HttpStatus.OK,
+      success : true
     }
   }
 
@@ -145,7 +151,7 @@ export class CategoryService {
     }
   }
 
-  async deleteCategory(categoryId : string) : Promise<CategoryDto | any> {
+  async deleteCategory(categoryId : string) : Promise<IResponse> {
     const category = await this.category_model.findById(categoryId);
     if (!category) {
       throw new HttpException({ message : "Category not found" }, HttpStatus.NOT_FOUND)
@@ -158,7 +164,10 @@ export class CategoryService {
     }
     await this.imageService.deleteImage( category.logo_url._id);
     await this.category_model.deleteOne({ _id : categoryId });
-    return { status :  HttpStatus.OK };
+    return {
+      statusCode : HttpStatus.OK,
+      success :  true 
+    };
   }
 
   async removeProductFromCategory(categoryId: string, productId: string): Promise<Category> {

@@ -10,12 +10,12 @@ import { RoleGuard } from '../guards/role.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UpdateProductDto } from '../dto/product/updateProduct.dto';
 import { ObjectIdValidationPipe } from '../pipes/object-id-validation.pipe';
+import { IResponse } from 'src/interfaces/response.interface';
 @UseFilters(AllExceptionsFilter)
 @Controller('products')
 @ApiTags('Products')
 export class ProductsController {
-  constructor (private readonly productService : ProductsService,
-    ) {}
+  constructor (private readonly productService : ProductsService) {}
 
 
   @ApiOperation({ summary : 'Search Product'})
@@ -40,8 +40,8 @@ export class ProductsController {
   async createProduct (
     @UploadedFiles() images:  Array<Express.Multer.File>,
     @Body() productDto: ProductDto
-  ) : Promise<ProductDto>{
-    return await this.productService.create(images,productDto)
+  ) : Promise<IResponse> {
+    return this.productService.create(images,productDto)
   }
 
   
@@ -56,8 +56,8 @@ export class ProductsController {
     return await this.productService.getAllProducts(page, limit);;
   }
 
-  @ApiOperation({ summary : 'Return top saled products'})
-  @ApiResponse({ status : HttpStatus.OK , description : 'Return top saled prodcuts if exists', type: [ProductDto]  })
+  @ApiOperation({ summary : 'Return top sale products'})
+  @ApiResponse({ status : HttpStatus.OK , description : 'Return top sale products if exists', type: [ProductDto]  })
   @HttpCode(HttpStatus.OK)
   @Get('top_sale')
   getTopSaleProducts () {
@@ -78,7 +78,7 @@ export class ProductsController {
 
   @ApiBearerAuth('auto-recourse-hub')
   @ApiOperation({ summary : 'Delete Product'})
-  @ApiResponse({ status : HttpStatus.OK, description : 'Delete product with provied id' })
+  @ApiResponse({ status : HttpStatus.OK, description : 'Delete product with provided id' })
   @ApiResponse({ status : HttpStatus.NOT_FOUND, description : 'Return Not found when product with provided id doesnt exist'  })
   @HttpCode(HttpStatus.OK)
   @Roles([UserRoles.Admin])

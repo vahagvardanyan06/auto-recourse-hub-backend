@@ -8,6 +8,7 @@ import { UpdateProductDto } from '../dto/product/updateProduct.dto';
 import { CategoryService } from '../category/category.service';
 import { ImageService } from '../imageService/image.service';
 import { MImage } from '../entities/image.entity';
+import { IResponse } from 'src/interfaces/response.interface';
 @Injectable()
 export class ProductsService {
   constructor(
@@ -22,7 +23,7 @@ export class ProductsService {
     return value.toLowerCase() === 'true';
   }
 
-  async create(images: Express.Multer.File[], productDto : ProductDto): Promise<ProductDto> {
+  async create(images: Express.Multer.File[], productDto : ProductDto): Promise<IResponse> {
     const { categoryId,  topSale, ...productData } = productDto;
     const category = await this.categoryService.findCategoryById(categoryId);
     if (!category) {
@@ -49,7 +50,10 @@ export class ProductsService {
     category.products.push(product);
     await category.save()
     await product.save();
-    return ProductDto.convertToDto(product);
+    return {
+      statusCode : HttpStatus.CREATED,
+      success : true
+    };
   }
 
 
@@ -63,7 +67,7 @@ export class ProductsService {
   }
 
 
-async deleteProduct (productId : string) {
+async deleteProduct (productId : string) : Promise<IResponse> {
   const product = await this.productModel.findById(productId);
   if (!product) {
     throw new HttpException({message : 'Product not found' }, HttpStatus.NOT_FOUND);
@@ -78,8 +82,8 @@ async deleteProduct (productId : string) {
   }
   await this.categoryService.removeProductFromCategories(productId)
   return {
-    message : 'success',
-    status : HttpStatus.OK
+    statusCode : HttpStatus.OK,
+    success : true
   };
 }
 
@@ -100,12 +104,12 @@ async deleteProduct (productId : string) {
         count,
         products : productDtos,
         page_total : page_total,
-        status : 200
+        status : HttpStatus.OK
       }
   }
 
 
-  async updateProduct (productId : string, updatedDto : UpdateProductDto, images : Array<Express.Multer.File>) {
+  async updateProduct (productId : string, updatedDto : UpdateProductDto, images : Array<Express.Multer.File>) : Promise<IResponse> {
     const product = await this.productModel.findById(productId)
     .populate('images');
     if (!product) {
@@ -151,7 +155,8 @@ async deleteProduct (productId : string) {
       { $set: updatedOne },
   );
   return {
-    status : HttpStatus.OK
+    statusCode : HttpStatus.OK,
+    success : true
   };
 }
 
