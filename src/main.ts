@@ -22,7 +22,7 @@ const app = await NestFactory.create(AppModule);
     .addServer('/api')
     .build();
     app.enableCors({
-      origin : 'http://example.flan',
+      origin : process.env.FRONT_URL,
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     });
     app.setGlobalPrefix('api');
